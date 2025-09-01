@@ -1,0 +1,8 @@
+# Ignore all screening data files to protect user privacy
+screening/*.txt
+screening/*.json
+screening/*.csv
+
+# Keep directory structure
+!screening/.gitkeep
+!.gitignore
