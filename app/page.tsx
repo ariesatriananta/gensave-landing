@@ -3,15 +3,22 @@ import { Card, CardContent } from "@/components/ui/card"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { Heart, Shield, Users, CheckCircle, Mail, Phone } from "lucide-react"
 import Link from "next/link"
+import Image from 'next/image';
 
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
+      <header className="border-b bg-card/30 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <Heart className="h-8 w-8 text-primary" />
+            <Image
+              src="/logo.png"
+              alt="Logo GenSave"
+              width={40}
+              height={40}
+              className="object-contain"
+            />
             <span className="text-2xl font-bold text-foreground">GenSave</span>
           </div>
           <div className="flex items-center space-x-4">

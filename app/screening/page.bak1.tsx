@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useMemo, useState, useEffect } from "react"
+import { useMemo, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -14,7 +14,7 @@ import { useRouter } from "next/navigation"
 import Image from 'next/image';
 
 
-type Step = number
+type Step = 1 | 2 | 3 | 4 | 5
 
 interface FormData {
   nama: string
@@ -25,43 +25,9 @@ interface FormData {
   tinggiBadan: string
   beratBadan: string
   alamat: string
-
-   // Thalasemia
   hemoglobinRendah: string
   cepatLelah: string
   keluargaTalasemia: string
-  // Diabetes Melitus
-  dm_bak_malam: string
-  dm_lapar_banyak: string
-  dm_haus_sering: string
-  dm_keluarga_dm: string
-  // Hipertensi
-  hpt_sakit_kepala: string
-  hpt_tekanan_tinggi: string
-  hpt_keluarga_hpt: string
-  // Kanker
-  knk_benjolan: string
-  knk_nyeri_berat: string
-  knk_keluarga_kanker: string
-  // Penyakit Jantung
-  jtg_cepat_lelah: string
-  jtg_berdebar_sesak: string
-  jtg_nyeri_dada: string
-  jtg_pjb: string
-  jtg_keluarga_jantung: string
-  // Disabilitas/Cacat
-  dis_fisik: string
-  dis_intelektual: string
-  dis_mental: string
-  dis_sensorik: string
-  dis_keluarga_disabilitas: string
-  // Buta Warna
-  bw_bingung_umum: string
-  bw_bingung_rgby: string
-  bw_keluarga_bw: string
-  // Hemofilia
-  hf_perdarahan: string
-  hf_keluarga_hf: string
 }
 
 export default function ScreeningPage() {
@@ -79,120 +45,10 @@ export default function ScreeningPage() {
     tinggiBadan: "",
     beratBadan: "",
     alamat: "",
-    hemoglobinRendah: "", cepatLelah: "", keluargaTalasemia: "",
-    dm_bak_malam: "", dm_lapar_banyak: "", dm_haus_sering: "", dm_keluarga_dm: "",
-    hpt_sakit_kepala: "", hpt_tekanan_tinggi: "", hpt_keluarga_hpt: "",
-    knk_benjolan: "", knk_nyeri_berat: "", knk_keluarga_kanker: "",
-    jtg_cepat_lelah: "", jtg_berdebar_sesak: "", jtg_nyeri_dada: "", jtg_pjb: "", jtg_keluarga_jantung: "",
-    dis_fisik: "", dis_intelektual: "", dis_mental: "", dis_sensorik: "", dis_keluarga_disabilitas: "",
-    bw_bingung_umum: "", bw_bingung_rgby: "", bw_keluarga_bw: "",
-    hf_perdarahan: "", hf_keluarga_hf: "",
+    hemoglobinRendah: "",
+    cepatLelah: "",
+    keluargaTalasemia: "",
   });
-
-  type DiseaseQuestion = { field: keyof FormData; label: string; weight: number }
-  type DiseaseGroup = { key: string; title: string; questions: DiseaseQuestion[] }
-
-  const DISEASES: DiseaseGroup[] = [
-    { // 1) Thalasemia
-      key: "thal", title: "Thalasemia",
-      questions: [
-        { field: "hemoglobinRendah",   label: "Apakah anda memiliki kadar hemoglobin (HB) rendah?", weight: 30 },
-        { field: "cepatLelah",         label: "Apakah anda sering merasa cepat lelah atau capek?",   weight: 30 },
-        { field: "keluargaTalasemia",  label: "Apakah keluarga anda ada yang menderita Talasemia?",  weight: 40 },
-      ],
-    },
-    { // 2) Diabetes Melitus
-      key: "dm", title: "Diabetes Melitus",
-      questions: [
-        { field: "dm_bak_malam",    label: "Apakah anda sering BAK pada malam hari?", weight: 25 },
-        { field: "dm_lapar_banyak", label: "Apakah anda sering merasa lapar dan makan lebih banyak dari biasanya?", weight: 25 },
-        { field: "dm_haus_sering",  label: "Apakah anda sering merasa haus walaupun sering minum?", weight: 25 },
-        { field: "dm_keluarga_dm",  label: "Apakah keluarga anda ada yang menderita Diabetes Melitus / Penyakit Gula?", weight: 25 },
-      ],
-    },
-    { // 3) Hipertensi
-      key: "hpt", title: "Hipertensi",
-      questions: [
-        { field: "hpt_sakit_kepala",   label: "Apakah anda sering merasakan sakit kepala bagian belakang?", weight: 30 },
-        { field: "hpt_tekanan_tinggi", label: "Apakah tekanan darah anda lebih dari 130/80?", weight: 30 },
-        { field: "hpt_keluarga_hpt",   label: "Apakah keluarga anda ada yang menderita Hipertensi?", weight: 40 },
-      ],
-    },
-    { // 4) Kanker
-      key: "knk", title: "Kanker",
-      questions: [
-        { field: "knk_benjolan",        label: "Apakah anda terdapat benjolan yang tidak normal (menetap) di bagian tubuh?", weight: 30 },
-        { field: "knk_nyeri_berat",     label: "Apakah anda sering merasakan nyeri berat dan tidak terkontrol?", weight: 30 },
-        { field: "knk_keluarga_kanker", label: "Apakah keluarga anda ada yang menderita Kanker?", weight: 40 },
-      ],
-    },
-    { // 5) Penyakit Jantung
-      key: "jtg", title: "Penyakit Jantung",
-      questions: [
-        { field: "jtg_cepat_lelah",      label: "Apakah anda cepat merasa lelah atau capek?", weight: 20 },
-        { field: "jtg_berdebar_sesak",   label: "Apakah anda merasakan jantung berdebar yang diikuti dengan sesak nafas?", weight: 20 },
-        { field: "jtg_nyeri_dada",       label: "Apakah anda terdapat nyeri dada seperti terbakar di sebelah kiri?", weight: 20 },
-        { field: "jtg_pjb",              label: "Apakah anda mempunyai penyakit jantung bawaan/PJB?", weight: 20 },
-        { field: "jtg_keluarga_jantung", label: "Apakah keluarga anda ada yang menderita Penyakit Jantung?", weight: 20 },
-      ],
-    },
-    { // 6) Disabilitas/Cacat
-      key: "dis", title: "Disabilitas / Cacat",
-      questions: [
-        { field: "dis_fisik",                label: "Fisik", weight: 20 },
-        { field: "dis_intelektual",          label: "Intelektual", weight: 20 },
-        { field: "dis_mental",               label: "Mental", weight: 20 },
-        { field: "dis_sensorik",             label: "Sensorik", weight: 20 },
-        { field: "dis_keluarga_disabilitas", label: "Apakah keluarga anda ada yang mengalami disabilitas/cacat?", weight: 20 },
-      ],
-    },
-    { // 7) Buta Warna
-      key: "bw", title: "Buta Warna",
-      questions: [
-        { field: "bw_bingung_umum", label: "Apakah anda tidak bisa membedakan warna atau semua warna tampak pudar/serupa?", weight: 30 },
-        { field: "bw_bingung_rgby", label: "Apakah anda tidak bisa membedakan warna (merah–hijau / biru–kuning)?", weight: 30 },
-        { field: "bw_keluarga_bw",  label: "Apakah keluarga anda ada yang menderita Buta Warna?", weight: 40 },
-      ],
-    },
-    { // 8) Hemofilia
-      key: "hf", title: "Hemofilia",
-      questions: [
-        { field: "hf_perdarahan", label: "Apakah anda sering mengalami perdarahan (gusi/mimisan/memar)?", weight: 50 },
-        { field: "hf_keluarga_hf", label: "Apakah keluarga anda ada yang menderita Hemofilia?", weight: 50 },
-      ],
-    },
-  ]
-
-  // ⬇️ letakkan DI DALAM function ScreeningPage(), setelah DISEASES
-  const BASE_AFTER_DATA = 2; // 1 intro, 2 data
-  const totalSteps = 2 + DISEASES.length * 2 + 1; // +1 summary
-
-  function getDiseaseStep(s: number):
-    | { idx: number; type: "qa" | "result"; group: DiseaseGroup }
-    | null {
-    const start = BASE_AFTER_DATA + 1;
-    const end = BASE_AFTER_DATA + DISEASES.length * 2;
-    if (s < start || s > end) return null;
-    const offset = s - start; // 0-based
-    const idx = Math.floor(offset / 2);
-    const type: "qa" | "result" = offset % 2 === 0 ? "qa" : "result";
-    return { idx, type, group: DISEASES[idx] };
-  }
-
-  // hasil per penyakit (buat summary)
-  const diseaseResults = useMemo(
-    () => DISEASES.map((g) => ({ key: g.title, val: computeDiseaseScore(g, formData) })),
-    [formData, DISEASES]
-  );
-
-  // rata-rata keseluruhan
-  const overall = useMemo(
-    () => Math.round(diseaseResults.reduce((a, b) => a + b.val, 0) / diseaseResults.length),
-    [diseaseResults]
-  );
-
-
-
 
   const BTN_PRIMARY =
     "bg-[#FFA052] hover:bg-orange-500 text-white shadow-sm " +
@@ -227,7 +83,18 @@ export default function ScreeningPage() {
     return Object.keys(nextErrors).length === 0
   }
 
+  const validateStep3 = () => {
+    const req: (keyof FormData)[] = ["hemoglobinRendah", "cepatLelah", "keluargaTalasemia"]
+    const nextErrors: Partial<Record<keyof FormData, string>> = {}
+    for (const k of req) {
+      if (!String(formData[k] ?? "").trim()) nextErrors[k] = "Pilih salah satu"
+    }
+    setErrors(nextErrors)
+    return Object.keys(nextErrors).length === 0
+  }
+
   // ===== Scoring (placeholder logic) =====
+  const results = useMemo(() => computeScores(formData), [formData])
   const today = useMemo(
     () =>
       new Date().toLocaleDateString("id-ID", {
@@ -238,50 +105,48 @@ export default function ScreeningPage() {
     []
   )
 
-  const validateDisease = (group: DiseaseGroup) => {
-    const next: Partial<Record<keyof FormData, string>> = {}
-    for (const q of group.questions) {
-      if (!String(formData[q.field] ?? "").trim()) next[q.field] = "Pilih salah satu"
-    }
-    setErrors((e) => ({ ...e, ...next }))
-    return Object.keys(next).length === 0
-  }
-
   const next = () => {
     if (step === 2 && !validateStep2()) return
-    const ds = getDiseaseStep(step)
-    if (ds && ds.type === "qa" && !validateDisease(ds.group)) return
-    setStep((s) => Math.min(s + 1, totalSteps))
+    if (step === 3 && !validateStep3()) return
+    setStep((s) => Math.min((s + 1) as Step, 5))
   }
-  const prev = () => setStep((s) => Math.max(s - 1, 1))
 
-  const submitAndFinish = () => {
-    // payload mentahan + timestamp
-    const payload = { ...formData, $submittedAt: new Date().toISOString() };
+  const prev = () => setStep((s) => Math.max((s - 1) as Step, 1))
 
+  const submitAndFinish = async () => {
+    setIsSubmitting(true)
     try {
-      // kirim diam-diam; tidak blok UI
-      if (typeof navigator !== "undefined" && "sendBeacon" in navigator) {
-        const blob = new Blob([JSON.stringify(payload)], { type: "application/json" });
-        (navigator as any).sendBeacon("/api/screening", blob);
-        router.replace("/screening/success");
-        return;
+      const ctrl = new AbortController()
+      const to = setTimeout(() => ctrl.abort(), 5000) // timeout 5s biar nggak ngegantung
+
+      const res = await fetch("/api/screening", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+        cache: "no-store",
+        keepalive: true, // kalau user cepat pindah page
+        signal: ctrl.signal,
+      })
+
+      clearTimeout(to)
+
+      // kalau API OK → langsung ke success
+      if (res.ok) {
+        router.push("/screening/success")
+        return
       }
-    } catch (e) {
-      console.warn("sendBeacon failed, fallback to fetch:", e);
+
+      // kalau API error → tetap navigate (kasih flag)
+      console.warn("submit failed:", res.status)
+      router.push("/screening/success?offline=1")
+    } catch (err) {
+      // abort/network error → tetap navigate (UX lanjut)
+      console.warn("submit exception:", err)
+      router.push("/screening/success?offline=1")
+    } finally {
+      setIsSubmitting(false)
     }
-
-    // fallback: fetch keepalive, tapi navigasi TETAP jalan
-    fetch("/api/screening", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-      keepalive: true,
-      cache: "no-store",
-    }).catch((e) => console.warn("submit error:", e));
-
-    router.replace("/screening/success");
-  };
+  }
 
   return (
     <div className="min-h-screen  bg-gradient-to-br from-secondary/20 to-primary/10">
@@ -298,13 +163,7 @@ export default function ScreeningPage() {
 
             {/* Tengah: Logo & Title */}
             <div className="flex justify-center items-center gap-2">
-              <Image
-                src="/logo.png"
-                alt="Logo GenSave"
-                width={40}
-                height={40}
-                className="object-contain"
-              />
+              <Heart className="h-8 w-8 text-primary" />
               <span className="text-2xl font-bold text-foreground">GenSave</span>
             </div>
 
@@ -328,7 +187,7 @@ export default function ScreeningPage() {
           </div> */}
 
           {/* Stepper */}
-          <Stepper step={step} total={totalSteps} />
+          <Stepper step={step} total={5} />
 
           {/* STEP 1 — Intro */}
           {step === 1 && (
@@ -510,84 +369,128 @@ export default function ScreeningPage() {
                 </div>
               </CardContent>
             </Card>
+
+
           )}
 
-          {/* ====== DISEASE STEPS (QA / RESULT) ====== */}
-          {(() => {
-            const ds = getDiseaseStep(step)
-            if (!ds) return null
-
-            if (ds.type === "qa") {
-              const g = ds.group
-              return (
-                <Card className="rounded-2xl border border-border/80 bg-card/90 shadow-md backdrop-blur-sm
-                                supports-[backdrop-filter]:bg-card/80 dark:supports-[backdrop-filter]:bg-card/60">
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-2xl font-semibold">{g.title}</CardTitle>
-                    <p className="mt-1 text-sm text-muted-foreground">Jawab jujur untuk hasil terbaik.</p>
-                  </CardHeader>
-                  <CardContent className="space-y-5 md:space-y-6">
-                    {g.questions.map((q) => (
-                      <QA
-                        key={String(q.field)}
-                        label={q.label}
-                        value={formData[q.field]}
-                        onChange={(v) => handleInputChange(q.field, v)}
-                        error={errors[q.field]}
-                        // default opsi: Ya/Tidak (bisa tambahkan "Kadang-kadang" kalau perlu)
-                      />
-                    ))}
-                    <div className="flex items-center justify-between pt-1">
-                      <Button variant="outline" onClick={prev} className={BTN_OUTLINE}>Kembali</Button>
-                      <Button onClick={next} className={BTN_PRIMARY}>Lihat Hasil</Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              )
-            }
-
-            // RESULT untuk penyakit ini
-            const g = ds.group
-            const score = computeDiseaseScore(g, formData)
-            return (
-              <Card className="rounded-2xl border border-border/80 bg-card/90 shadow-md backdrop-blur-sm
-                              supports-[backdrop-filter]:bg-card/80 dark:supports-[backdrop-filter]:bg-card/60">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-2xl font-semibold text-center">Hasil {g.title}</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6 md:space-y-7">
-                  <p className="text-xs font-semibold text-center text-foreground/80">{today}</p>
-                  <DonutChart value={score} size={200} thickness={20} duration={1200} />
-                  <p className="text-center text-lg font-semibold text-[#FFA052]">
-                    Perkiraan Risiko {g.title}: <span className="font-black">{score}%</span>
-                  </p>
-                  <blockquote className="rounded-lg border p-3 text-xs leading-relaxed text-center
-                                        bg-orange-50 text-orange-800 border-orange-200
-                                        dark:bg-orange-950/40 dark:text-orange-300 dark:border-orange-900">
-                    Hasil ini merupakan screening dasar. Segera cek ke fasilitas kesehatan untuk memastikan.
-                    <br/><br/><em>&ldquo;Jangan pernah kehilangan harapan karena sesungguhnya setiap kesulitan pasti ada kemudahan.&rdquo;</em>
-                  </blockquote>
-                  <div className="flex items-center justify-between">
-                    <Button variant="outline" onClick={prev} className={BTN_OUTLINE}>Kembali</Button>
-                    <Button onClick={next} className={BTN_PRIMARY}>Lanjut</Button>
+          {/* STEP 3 — Thalasemia */}
+          {step === 3 && (
+            <Card className="rounded-2xl border border-border/80 bg-card/90 shadow-md backdrop-blur-sm
+                 supports-[backdrop-filter]:bg-card/80 dark:supports-[backdrop-filter]:bg-card/60">
+              <CardHeader className="pb-2">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <CardTitle className="text-2xl font-semibold tracking-tight">Thalasemia</CardTitle>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      Jawab jujur untuk hasil terbaik.
+                    </p>
                   </div>
-                </CardContent>
-              </Card>
-            )
-          })()}
-          
-          {/* ====== SUMMARY (STEP TERAKHIR) ====== */}
-          {step === totalSteps && (
+
+                  {/* Hint ringkas tanpa lib tambahan */}
+                  <details className="select-none">
+                    <summary className="inline-flex cursor-pointer items-center gap-2 text-xs md:text-sm text-muted-foreground hover:text-foreground">
+                      <Info className="h-4 w-4" />
+                      Klik Untuk Detailnya
+                    </summary>
+                    <div className="mt-3 max-w-sm rounded-lg border bg-card p-3 text-xs leading-relaxed text-muted-foreground">
+                      Thalasemia adalah kelainan darah turunan. Skrining dini membantu
+                      perencanaan pemeriksaan lanjutan. Hasil di sini bukan diagnosis.
+                    </div>
+                  </details>
+                </div>
+              </CardHeader>
+
+              <CardContent className="space-y-5 md:space-y-6">
+                {/* Q1 */}
+                <QA
+                  label="Apakah anda memiliki kadar hemoglobin (HB) rendah?"
+                  value={formData.hemoglobinRendah}
+                  onChange={(v) => handleInputChange("hemoglobinRendah", v)}
+                  error={errors.hemoglobinRendah}
+                />
+
+                {/* Q2 */}
+                <QA
+                  label="Apakah anda sering merasa cepat lelah atau capek?"
+                  value={formData.cepatLelah}
+                  onChange={(v) => handleInputChange("cepatLelah", v)}
+                  options={[
+                    { id: "lelah-ya", value: "ya", label: "Ya" },
+                    { id: "lelah-tidak", value: "tidak", label: "Tidak" },
+                    // { id: "lelah-kadang", value: "kadang-kadang", label: "Kadang-kadang" },
+                  ]}
+                  error={errors.cepatLelah}
+                />
+
+                {/* Q3 */}
+                <QA
+                  label="Apakah keluarga anda ada yang menderita Talasemia?"
+                  value={formData.keluargaTalasemia}
+                  onChange={(v) => handleInputChange("keluargaTalasemia", v)}
+                  error={errors.keluargaTalasemia}
+                />
+
+                <div className="flex items-center justify-between pt-1">
+                  <Button variant="outline" onClick={prev} className={BTN_OUTLINE}>Kembali</Button>
+                  <Button onClick={next} className={BTN_PRIMARY}>Lanjut</Button>
+                </div>
+              </CardContent>
+            </Card>
+
+          )}
+
+          {/* STEP 4 — Hasil Screening */}
+          {step === 4 && (
             <Card className="rounded-2xl border border-border/80 bg-card/90 shadow-md backdrop-blur-sm
                             supports-[backdrop-filter]:bg-card/80 dark:supports-[backdrop-filter]:bg-card/60">
               <CardHeader className="pb-2">
-                <CardTitle className="text-2xl font-semibold">Ringkasan Hasil Screening</CardTitle>
+                <CardTitle className="text-2xl font-semibold text-center">Hasil Screening</CardTitle>
+              </CardHeader>
+
+              <CardContent className="space-y-6 md:space-y-7">
+                {/* Tanggal */}
+                <p className="text-xs font-semibold text-center text-foreground/80">{today}</p>
+
+                {/* DONUT */}
+                <DonutChart value={results.overall} size={200} thickness={20} duration={1200} />
+
+                {/* Judul risiko */}
+                <p className="mt-1 text-center text-lg font-semibold text-[#FFA052]">
+                  Berisiko Terkena Penyakit <span className="block">{results.top?.key}</span>
+                </p>
+
+                {/* Disclaimer + quote */}
+                <blockquote className="rounded-lg border p-3 text-xs leading-relaxed text-center
+                                      bg-orange-50 text-orange-800 border-orange-200
+                                      dark:bg-orange-950/40 dark:text-orange-300 dark:border-orange-900">
+                  Hasil ini merupakan screening dasar. Segera cek ke puskesmas atau rumah sakit terdekat untuk memastikan.
+                  <br /><br />
+                  <em>&ldquo;Jangan pernah kehilangan harapan karena sesungguhnya setiap kesulitan pasti ada kemudahan.&rdquo;</em>
+                </blockquote>
+
+                {/* CTA */}
+                <div className="flex items-center justify-between">
+                  <Button variant="outline" onClick={prev} className={BTN_OUTLINE}>Kembali</Button>
+                  <Button onClick={next} className={BTN_PRIMARY}>Lihat Detail</Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+
+          {/* STEP 5 — HASIL SCREENING PER ITEM */}
+          {step === 5 && (
+            <Card className="rounded-2xl shadow-sm ring-0 ring-black/5">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-xl md:text-2xl uppercase tracking-wide">
+                  HASIL SCREENING PER ITEM
+                </CardTitle>
               </CardHeader>
               <CardContent className="space-y-5 md:space-y-6">
                 <p className="text-xs text-muted-foreground">{today}</p>
 
                 <ul className="space-y-3">
-                  {diseaseResults.map((it) => (
+                  {results.items.map((it) => (
                     <li key={it.key} className="rounded-lg border p-3 md:p-4">
                       <div className="mb-2 flex items-center justify-between text-sm">
                         <span className="font-medium">{it.key}</span>
@@ -600,32 +503,22 @@ export default function ScreeningPage() {
                   ))}
                 </ul>
 
-                <div className="text-center">
-                  <p className="text-sm text-muted-foreground">Rata-rata keseluruhan</p>
-                  <div className="text-4xl font-extrabold text-[#FFA052]">{overall}%</div>
-                </div>
-
                 <blockquote className="rounded-lg border p-3 text-xs leading-relaxed text-center bg-orange-50 text-orange-800 border-orange-200 dark:bg-orange-950/40 dark:text-orange-300 dark:border-orange-900">
                   Hasil ini merupakan screening dasar. Segera cek ke puskesmas atau rumah sakit terdekat untuk memastikan.
-                  <br/><br/><em>&ldquo;Jangan pernah kehilangan harapan karena sesungguhnya setiap kesulitan pasti ada kemudahan.&rdquo;</em>
+                  <br /><br />
+                  <em>&ldquo;Jangan pernah kehilangan harapan karena sesungguhnya setiap kesulitan pasti ada kemudahan.&rdquo;</em>
                 </blockquote>
 
                 <div className="flex items-center justify-between pt-1">
                   <Button variant="outline" onClick={prev} className={BTN_OUTLINE}>Kembali</Button>
-                  <Button
-                    type="button"
-                    onClick={submitAndFinish}
-                    disabled={isSubmitting}
-                    className={BTN_PRIMARY}
-                  >
-                    {isSubmitting ? "…" : "Selesai"}
+                  <Button type="button" onClick={submitAndFinish} disabled={isSubmitting} className={BTN_PRIMARY}>
+                    {isSubmitting ? (<>…</>) : "Selesai"}
                   </Button>
+
                 </div>
               </CardContent>
             </Card>
           )}
-
-          
         </div>
       </section>
     </div>
@@ -639,6 +532,34 @@ function ErrorText({ children }: { children?: React.ReactNode }) {
   return <p className="mt-1 text-xs text-red-600">{children}</p>
 }
 
+
+function NumberField(props: {
+  id: string
+  label: string
+  value: string
+  onChange: (v: string) => void
+  placeholder?: string
+  min?: number
+  max?: number
+  error?: string
+}) {
+  const { id, label, value, onChange, placeholder, min, max, error } = props
+  return (
+    <div>
+      <Label htmlFor={id}>{label}</Label>
+      <Input
+        id={id}
+        type="number"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        min={min}
+        max={max}
+      />
+      <ErrorText>{error}</ErrorText>
+    </div>
+  )
+}
 
 function Stepper({ step, total }: { step: number; total: number }) {
   const pct = Math.round(((step - 1) / (total - 1)) * 100);
@@ -835,6 +756,27 @@ function scoreYN(v: string, yes = 50, no = 0) {
   return yes
 }
 
+function computeScores(v: FormData) {
+  const items = [
+    {
+      key: "Thalasemia",
+      val: Math.max(
+        0,
+        Math.min(
+          100,
+          Math.round(scoreYN(v.hemoglobinRendah, 30) + scoreYN(v.cepatLelah, 30) + scoreYN(v.keluargaTalasemia, 40))
+        )
+      ),
+    },
+  ]
+  const overall = Math.round(items.reduce((a, b) => a + b.val, 0) / items.length)
+  const top = items.slice().sort((a, b) => b.val - a.val)[0]
+  return { items, overall, top }
+}
+
+
+import { useEffect } from "react"; // pastikan ada
+
 function DonutChart({
   value,
   size = 240,
@@ -942,17 +884,4 @@ function CountUp({ to, duration = 1000 }: { to: number; duration?: number }) {
   }, [to, duration]);
 
   return <>{n}</>;
-}
-
-
-function scoreByWeight(v: string, w: number) {
-  if (v === "ya") return w
-  if (v === "kadang-kadang") return Math.round(w / 2)
-  if (v === "tidak-tahu") return Math.round(w / 3)
-  return 0
-}
-
-function computeDiseaseScore(group: DiseaseGroup, v: FormData) {
-  const s = group.questions.reduce((a, q) => a + scoreByWeight(v[q.field], q.weight), 0)
-  return Math.max(0, Math.min(100, Math.round(s)))
 }
