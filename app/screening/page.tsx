@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Textarea } from "@/components/ui/textarea"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { Heart, ArrowLeft, Loader2, Info, User, MapPin, Calendar, Ruler, Scale } from "lucide-react"
@@ -178,7 +177,9 @@ export default function ScreeningPage() {
 
           {/* STEP 1 — Intro */}
           {step === 1 && (
-            <Card className="rounded-2xl border border-slate-200/80 bg-white/90 shadow-md backdrop-blur-sm">
+            <Card className="rounded-2xl border border-border/80 bg-card/90 shadow-md backdrop-blur-sm
+                 supports-[backdrop-filter]:bg-card/80 dark:supports-[backdrop-filter]:bg-card/60">
+
               <CardContent className="px-5 md:px-8 pt-0 pb-6">
 
                 {/* Logo */}
@@ -226,7 +227,8 @@ export default function ScreeningPage() {
 
           {/* STEP 2 — Masukkan Data Diri */}
           {step === 2 && (
-            <Card className="rounded-2xl border border-slate-200/80 bg-white/90 shadow-md backdrop-blur-sm">
+            <Card className="rounded-2xl border border-border/80 bg-card/90 shadow-md backdrop-blur-sm
+                 supports-[backdrop-filter]:bg-card/80 dark:supports-[backdrop-filter]:bg-card/60">
               <CardHeader className="pb-2">
                 <CardTitle className="text-2xl font-semibold text-center">Masukkan Data Diri</CardTitle>
               </CardHeader>
@@ -249,14 +251,15 @@ export default function ScreeningPage() {
                   {/* Jenis Kelamin */}
                   <div className="grid gap-2">
                     <Label>Jenis Kelamin <span className="text-orange-600">*</span></Label>
-                    <RadioGroup
+                    <PillsGroup
+                      ariaLabel="Jenis Kelamin"
                       value={formData.jenisKelamin}
-                      onValueChange={(v) => handleInputChange("jenisKelamin", v)}
-                      className="mt-1 flex flex-wrap gap-2"
-                    >
-                      <Segmented id="jk-l" value="laki-laki" label="Laki-laki" />
-                      <Segmented id="jk-p" value="perempuan" label="Perempuan" />
-                    </RadioGroup>
+                      onChange={(v) => handleInputChange("jenisKelamin", v)}
+                      options={[
+                        { value: "laki-laki", label: "Laki-laki" },
+                        { value: "perempuan", label: "Perempuan" },
+                      ]}
+                    />
                     <ErrorText>{errors.jenisKelamin}</ErrorText>
                   </div>
 
@@ -358,7 +361,8 @@ export default function ScreeningPage() {
 
           {/* STEP 3 — Thalasemia */}
           {step === 3 && (
-            <Card className="rounded-2xl border border-slate-200/80 bg-white/90 shadow-md backdrop-blur-sm">
+            <Card className="rounded-2xl border border-border/80 bg-card/90 shadow-md backdrop-blur-sm
+                 supports-[backdrop-filter]:bg-card/80 dark:supports-[backdrop-filter]:bg-card/60">
               <CardHeader className="pb-2">
                 <div className="flex items-start justify-between gap-3">
                   <div>
@@ -399,7 +403,7 @@ export default function ScreeningPage() {
                   options={[
                     { id: "lelah-ya", value: "ya", label: "Ya" },
                     { id: "lelah-tidak", value: "tidak", label: "Tidak" },
-                    { id: "lelah-kadang", value: "kadang-kadang", label: "Kadang-kadang" },
+                    // { id: "lelah-kadang", value: "kadang-kadang", label: "Kadang-kadang" },
                   ]}
                   error={errors.cepatLelah}
                 />
@@ -423,23 +427,34 @@ export default function ScreeningPage() {
 
           {/* STEP 4 — Hasil Screening */}
           {step === 4 && (
-            <Card className="rounded-2xl shadow-sm ring-0 ring-black/5">
-              <CardHeader className="pb-3 md:pb-4">
-                <CardTitle className="text-xl md:text-2xl">Hasil Screening</CardTitle>
+            <Card className="rounded-2xl border border-border/80 bg-card/90 shadow-md backdrop-blur-sm
+                            supports-[backdrop-filter]:bg-card/80 dark:supports-[backdrop-filter]:bg-card/60">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-2xl font-semibold text-center">Hasil Screening</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-6 md:space-y-7">
-                <div className="text-center">
-                  <div className="text-5xl font-extrabold tracking-tight">{results.overall}%</div>
-                  <p className="mt-2 text-sm text-muted-foreground">
-                    Berisiko Terkena Penyakit <b>{results.top?.key}</b>
-                  </p>
-                  <p className="text-xs text-muted-foreground mt-1">{today}</p>
-                </div>
 
-                <blockquote className="rounded-lg border bg-card p-4 text-sm leading-relaxed text-muted-foreground">
-                  Hasil Ini Merupakan Screening Dasar. Segera Cek ke Puskesmas atau Rumah Sakit Terdekat Untuk Memastikan.
+              <CardContent className="space-y-6 md:space-y-7">
+                {/* Tanggal */}
+                <p className="text-xs font-semibold text-center text-foreground/80">{today}</p>
+
+                {/* DONUT */}
+                <DonutChart value={results.overall} size={200} thickness={20} duration={1200} />
+
+                {/* Judul risiko */}
+                <p className="mt-1 text-center text-lg font-semibold text-[#FFA052]">
+                  Berisiko Terkena Penyakit <span className="block">{results.top?.key}</span>
+                </p>
+
+                {/* Disclaimer + quote */}
+                <blockquote className="rounded-lg border p-3 text-xs leading-relaxed text-center
+                                      bg-orange-50 text-orange-800 border-orange-200
+                                      dark:bg-orange-950/40 dark:text-orange-300 dark:border-orange-900">
+                  Hasil ini merupakan screening dasar. Segera cek ke puskesmas atau rumah sakit terdekat untuk memastikan.
+                  <br /><br />
+                  <em>&ldquo;Jangan pernah kehilangan harapan karena sesungguhnya setiap kesulitan pasti ada kemudahan.&rdquo;</em>
                 </blockquote>
 
+                {/* CTA */}
                 <div className="flex items-center justify-between">
                   <Button variant="outline" onClick={prev} className={BTN_OUTLINE}>Kembali</Button>
                   <Button onClick={next} className={BTN_PRIMARY}>Lihat Detail</Button>
@@ -447,6 +462,7 @@ export default function ScreeningPage() {
               </CardContent>
             </Card>
           )}
+
 
           {/* STEP 5 — HASIL SCREENING PER ITEM */}
           {step === 5 && (
@@ -464,17 +480,19 @@ export default function ScreeningPage() {
                     <li key={it.key} className="rounded-lg border p-3 md:p-4">
                       <div className="mb-2 flex items-center justify-between text-sm">
                         <span className="font-medium">{it.key}</span>
-                        <span className="font-semibold">{it.val}%</span>
+                        <span className="font-semibold text-[#FFA052] dark:text-orange-300">{it.val}%</span>
                       </div>
                       <div className="h-2 rounded bg-muted">
-                        <div className="h-2 rounded bg-primary" style={{ width: `${it.val}%` }} />
+                        <div className="h-2 rounded bg-[#FFA052] transition-all" style={{ width: `${it.val}%` }} />
                       </div>
                     </li>
                   ))}
                 </ul>
 
-                <blockquote className="rounded-lg border bg-card p-4 text-sm leading-relaxed text-muted-foreground">
-                  Hasil Ini Merupakan Screening Dasar. Segera Cek ke Puskesmas atau Rumah Sakit Terdekat Untuk Memastikan.
+                <blockquote className="rounded-lg border p-3 text-xs leading-relaxed text-center bg-orange-50 text-orange-800 border-orange-200 dark:bg-orange-950/40 dark:text-orange-300 dark:border-orange-900">
+                  Hasil ini merupakan screening dasar. Segera cek ke puskesmas atau rumah sakit terdekat untuk memastikan.
+                  <br /><br />
+                  <em>&ldquo;Jangan pernah kehilangan harapan karena sesungguhnya setiap kesulitan pasti ada kemudahan.&rdquo;</em>
                 </blockquote>
 
                 <div className="flex items-center justify-between pt-1">
@@ -497,19 +515,6 @@ export default function ScreeningPage() {
 function ErrorText({ children }: { children?: React.ReactNode }) {
   if (!children) return null
   return <p className="mt-1 text-xs text-red-600">{children}</p>
-}
-
-function RadioItem({ id, value, label }: { id: string; value: string; label: string }) {
-  return (
-    <div className="flex items-center gap-2">
-      <RadioGroupItem
-        id={id}
-        value={value}
-        className="text-orange-600 border-orange-300 data-[state=checked]:bg-orange-600"
-      />
-      <Label htmlFor={id}>{label}</Label>
-    </div>
-  )
 }
 
 
@@ -542,18 +547,30 @@ function NumberField(props: {
 }
 
 function Stepper({ step, total }: { step: number; total: number }) {
-  const pct = Math.round(((step - 1) / (total - 1)) * 100)
+  const pct = Math.round(((step - 1) / (total - 1)) * 100);
+
   return (
     <div className="mb-8">
-      <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
+      <div className="mb-2 flex items-center justify-between text-xs text-orange-700">
         <span>Langkah {step} / {total}</span>
         <span>{pct}%</span>
       </div>
-      <div className="h-2 rounded bg-muted">
-        <div className="h-2 rounded bg-primary transition-all" style={{ width: `${pct}%` }} />
+
+      {/* Track oranye lembut + blur tipis */}
+      <div className="relative h-2 w-full overflow-hidden rounded-full bg-orange-100 ring-1 ring-orange-200/60">
+        {/* Bar progress gradasi oranye */}
+        <div
+          className="h-full rounded-full bg-gradient-to-r from-[#FFA052] to-orange-500 transition-all"
+          style={{ width: `${pct}%` }}
+        />
+        {/* Knob di ujung bar */}
+        <div
+          className="absolute top-1/2 h-3 w-3 -translate-y-1/2 -translate-x-1/2 rounded-full bg-white ring-2 ring-orange-500"
+          style={{ left: `${pct}%` }}
+        />
       </div>
     </div>
-  )
+  );
 }
 
 const hitungUmur = (tanggal: string) => {
@@ -576,7 +593,7 @@ function IconInput({
       <Icon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
       <Input
         id={id}
-        className={["pl-9 focus-visible:ring-orange-500", className || ""].join(" ")}
+        className={["pl-9 focus-visible:ring-orange-500 dark:placeholder:text-slate-400", className || ""].join(" ")}
         onChange={(e) => onChange?.(e.target.value)}
         {...rest}
       />
@@ -610,27 +627,48 @@ function UnitInput({
   );
 }
 
-// Radio pill (segmented)
-function Segmented({ id, value, label }: { id: string; value: string; label: string }) {
+
+type PillOption = { value: string; label: string };
+
+function PillsGroup({
+  value,
+  onChange,
+  options,
+  ariaLabel,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  options: PillOption[];
+  ariaLabel?: string;
+}) {
   return (
-    <div className="relative">
-      <RadioGroupItem id={id} value={value} className="peer sr-only" />
-      <Label
-        htmlFor={id}
-        className={[
-          "inline-flex cursor-pointer select-none items-center justify-center",
-          "rounded-lg border px-3 py-2 text-sm",
-          "border-slate-300 text-slate-700 hover:bg-orange-50",
-          "peer-checked:border-orange-500 peer-checked:bg-orange-100 peer-checked:text-orange-700",
-          "peer-focus-visible:ring-2 peer-focus-visible:ring-orange-500 peer-focus-visible:ring-offset-2",
-          "transition-colors",
-        ].join(" ")}
-      >
-        {label}
-      </Label>
+    <div role="radiogroup" aria-label={ariaLabel} className="mt-1 flex flex-wrap gap-2">
+      {options.map((o) => {
+        const selected = value === o.value;
+        return (
+          <button
+            key={o.value}
+            type="button"
+            role="radio"
+            aria-checked={selected}
+            onClick={() => onChange(o.value)}
+            className={[
+              "inline-flex items-center justify-center rounded-lg border px-3 py-2 text-sm transition-colors",
+              selected
+                ? "border-[#FFA052] bg-orange-100 text-[#FFA052] dark:bg-orange-950/60 dark:text-orange-300"
+                : "border-slate-300 text-slate-700 hover:bg-orange-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-orange-950/30",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2",
+            ].join(" ")}
+
+          >
+            {o.label}
+          </button>
+        );
+      })}
     </div>
   );
 }
+
 
 // BMI badge live
 function BMIChip({ tinggiCm, beratKg }: { tinggiCm: string; beratKg: string }) {
@@ -661,33 +699,39 @@ function BMIChip({ tinggiCm, beratKg }: { tinggiCm: string; beratKg: string }) {
 
 
 function QA({
-  label,
-  value,
-  onChange,
-  options = [
-    { id: "ya", value: "ya", label: "Ya" },
-    { id: "tidak", value: "tidak", label: "Tidak" },
-  ],
+    label,
+    value,
+    onChange,
+    options = [
+      { value: "ya", label: "Ya" },
+      { value: "tidak", label: "Tidak" },
+    ],
+    error,
 }: {
-  label: string
-  value: string
-  onChange: (v: string) => void
-  options?: { id: string; value: string; label: string }[]
+    label: string;
+    value: string;
+    onChange: (v: string) => void;
+    options?: PillOption[];
+    error?: string;
 }) {
-  return (
-    <div>
-      <Label className="text-base font-medium">{label}</Label>
-      <RadioGroup value={value} onValueChange={onChange} className="mt-2 flex flex-wrap gap-6">
-        {options.map((o) => (
-          <div key={o.id} className="flex items-center gap-2">
-            <RadioGroupItem id={o.id} value={o.value} />
-            <Label htmlFor={o.id}>{o.label}</Label>
-          </div>
-        ))}
-      </RadioGroup>
-    </div>
-  )
+    const base = "rounded-xl border p-4 md:p-5 transition-colors";
+    const ok   = "border-border bg-card hover:bg-muted/60";
+    const bad  = "border-destructive/40 bg-destructive/10 text-destructive";
+
+
+    return (
+      <div className={`${base} ${error ? bad : ok}`}>
+        <div className="mb-3 text-sm font-medium text-foreground">
+          <span className="after:ml-0.5 after:text-orange-600 after:content-['*']">{label}</span>
+        </div>
+
+        <PillsGroup value={value} onChange={onChange} options={options} />
+
+        {error && <ErrorText>{error}</ErrorText>}
+      </div>
+    );
 }
+
 
 function scoreYN(v: string, yes = 50, no = 0) {
   // treat "kadang-kadang" as moderate yes
@@ -705,7 +749,7 @@ function computeScores(v: FormData) {
         0,
         Math.min(
           100,
-          Math.round(scoreYN(v.hemoglobinRendah, 35) + scoreYN(v.cepatLelah, 20) + scoreYN(v.keluargaTalasemia, 45))
+          Math.round(scoreYN(v.hemoglobinRendah, 30) + scoreYN(v.cepatLelah, 30) + scoreYN(v.keluargaTalasemia, 40))
         )
       ),
     },
@@ -713,4 +757,116 @@ function computeScores(v: FormData) {
   const overall = Math.round(items.reduce((a, b) => a + b.val, 0) / items.length)
   const top = items.slice().sort((a, b) => b.val - a.val)[0]
   return { items, overall, top }
+}
+
+
+import { useEffect } from "react"; // pastikan ada
+
+function DonutChart({
+  value,
+  size = 240,
+  thickness = 24,
+  duration = 1000,
+}: {
+  value: number;
+  size?: number;
+  thickness?: number;
+  duration?: number;
+}) {
+  const r = (size - thickness) / 2;
+  const C = 2 * Math.PI * r;
+
+  // animasi dashoffset
+  const targetOffset = C * (1 - Math.max(0, Math.min(100, value)) / 100);
+  const [offset, setOffset] = useState(C);
+
+  useEffect(() => {
+    // animasi easeOutCubic
+    const start = performance.now();
+    const from = C;
+    const to = targetOffset;
+
+    const tick = (now: number) => {
+      const t = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - t, 3);
+      setOffset(from + (to - from) * eased);
+      if (t < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value, C, targetOffset, duration]);
+
+  // id gradient unik
+  const gradId = useMemo(() => `donutGrad-${Math.random().toString(36).slice(2, 9)}`, []);
+
+  return (
+    <div className="relative mx-auto" style={{ width: size, height: size }}>
+      <svg
+        width={size}
+        height={size}
+        viewBox={`0 0 ${size} ${size}`}
+        className="block text-slate-300 dark:text-slate-700"
+      >
+        <defs>
+          <linearGradient id={gradId} x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#FFA052" />
+            <stop offset="100%" stopColor="#f97316" />
+          </linearGradient>
+        </defs>
+
+        {/* Track */}
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={r}
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={thickness}
+          strokeLinecap="round"
+        />
+
+        {/* Progress */}
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={r}
+          fill="none"
+          stroke={`url(#${gradId})`}
+          strokeWidth={thickness}
+          strokeLinecap="round"
+          strokeDasharray={C}
+          strokeDashoffset={offset}
+          style={{
+            transformOrigin: "50% 50%",
+            transform: "rotate(-90deg)",
+          }}
+        />
+      </svg>
+
+      {/* Label persen di tengah */}
+      <div className="absolute inset-0 grid place-items-center">
+        <div className="text-5xl md:text-6xl font-black tracking-tight text-foreground">
+          <CountUp to={Math.round(Math.max(0, Math.min(100, value)))} duration={duration} />%
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function CountUp({ to, duration = 1000 }: { to: number; duration?: number }) {
+  const [n, setN] = useState(0);
+
+  useEffect(() => {
+    const start = performance.now();
+    const from = 0;
+    const tick = (now: number) => {
+      const t = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - t, 3);
+      setN(Math.round(from + (to - from) * eased));
+      if (t < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }, [to, duration]);
+
+  return <>{n}</>;
 }
