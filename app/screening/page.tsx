@@ -13,6 +13,9 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import Image from 'next/image';
 
+function safeSlug(s: string) {
+  return (s || "user").toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
+}
 
 type Step = number
 
@@ -260,38 +263,49 @@ export default function ScreeningPage() {
   }
   const prev = () => setStep((s) => Math.max(s - 1, 1))
 
+  function buildClientPayload(formData: FormData, diseaseResults: {key:string;val:number}[], overall:number) {
+    return {
+      createdAt: new Date().toISOString(),
+      profile: {
+        nama: formData.nama,
+        jenisKelamin: formData.jenisKelamin,
+        tempatLahir: formData.tempatLahir,
+        tanggalLahir: formData.tanggalLahir,
+        umur: formData.umur,
+        tinggiBadan: formData.tinggiBadan,
+        beratBadan: formData.beratBadan,
+        alamat: formData.alamat,
+      },
+      answers: formData,             // semua jawaban mentah
+      results: { items: diseaseResults, overall },
+    };
+  }
+
+
   const submitAndFinish = async () => {
     setIsSubmitting(true);
     try {
+      // 1) stash payload untuk halaman sukses (client-only download)
+      const payload = buildClientPayload(formData, diseaseResults, overall);
+      try { sessionStorage.setItem("gensave:latest", JSON.stringify(payload)); } catch {}
+
+      // 2) tetap tulis file di server (fire & forget, tapi tetap ditunggu singkat)
       const ctrl = new AbortController();
       const to = setTimeout(() => ctrl.abort(), 8000);
 
-      const res = await fetch("/api/screening", {
+      await fetch("/api/screening", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(formData),  // <= kirim data form mentah ke route.ts kamu
         cache: "no-store",
         keepalive: true,
         signal: ctrl.signal,
-      });
+      }).catch(() => { /* biarin, kita tetap redirect */ });
 
       clearTimeout(to);
-
-      if (res.ok) {
-        const j = await res.json();
-        const qs = new URLSearchParams();
-        if (j.downloadTxtUrl)  qs.set("txt", j.downloadTxtUrl);
-        if (j.downloadJsonUrl) qs.set("json", j.downloadJsonUrl);
-        if (j.filenameTxt)     qs.set("file", j.filenameTxt);
-        router.push(`/screening/success?${qs.toString()}`);
-        return;
-      }
-
-      router.push("/screening/success?offline=1");
-    } catch {
-      router.push("/screening/success?offline=1");
     } finally {
       setIsSubmitting(false);
+      router.push("/screening/success"); // tidak perlu query param
     }
   };
 
