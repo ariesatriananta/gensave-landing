@@ -194,6 +194,7 @@ export default function ScreeningPage() {
   const CONTRIBUTORS = [
     "Fifi Alviana",
     "Candra Dewi Rahayu",
+    "Aura Aulia",
     "Anisa Rohma Ningrum",
     "Erika Lestari",
   ];

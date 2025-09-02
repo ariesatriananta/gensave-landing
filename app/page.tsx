@@ -9,6 +9,7 @@ export default function HomePage() {
   const CONTRIBUTORS = [
     "Fifi Alviana",
     "Candra Dewi Rahayu",
+    "Aura Aulia",
     "Anisa Rohma Ningrum",
     "Erika Lestari",
   ];
@@ -257,7 +258,7 @@ export default function HomePage() {
               © {new Date().getFullYear()} <span className="font-semibold text-foreground">GenSave</span>. All rights reserved.
             </p>
               <p className="text-sm text-muted-foreground">
-                <span className="text-foreground">
+                <span className="text-foreground ">
                   {CONTRIBUTORS.join(" • ")}
                 </span>
               </p>
