@@ -2,7 +2,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ThemeToggle } from "@/components/theme-toggle"
-import { Heart, CheckCircle, ArrowLeft } from "lucide-react"
+import { Heart, CheckCircle, ArrowLeft, ArrowBigDown, ArrowDown } from "lucide-react"
 
 const BTN_PRIMARY =
   "bg-[#FFA052] hover:bg-orange-500 text-white shadow-sm " +
@@ -11,7 +11,12 @@ const BTN_PRIMARY =
 const BTN_OUTLINE =
   "border-orange-200 text-orange-500 hover:bg-orange-100 hover:text-[#FFA052] border-[#FFA052]"
 
-export default function SuccessPage() {
+export default function SuccessPage({
+    searchParams,
+  }: {
+    searchParams: { txt?: string; json?: string; file?: string; offline?: string };
+  }) {
+  const { txt, json, file, offline } = searchParams || {};
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary/20 to-primary/10">
       {/* Header */}
@@ -61,11 +66,22 @@ export default function SuccessPage() {
               <p className="text-sm text-muted-foreground">
                 Tim kami akan meninjau dan, bila diperlukan, menghubungi Anda untuk langkah selanjutnya.
               </p>
-
-              <div className="mt-4 flex flex-col sm:flex-row gap-3 justify-center">
+              <div className="mt-4 flex flex-col sm:flex-row gap-3 justify-center py-3">
+                {/* Tombol Download TXT */}
+                {txt ? (
+                  <Button className="bg-[#FFA052] hover:bg-orange-500">
+                    <a href={txt} target="_blank" rel="noopener" className="flex items-center gap-2">
+                      <ArrowDown className="h-4 w-4" />
+                      Unduh Hasil{file ? ` (${file})` : ""}
+                    </a>
+                  </Button>
+                ) : (
+                  <Button disabled className="opacity-60" > <ArrowDown className="h-6 w-6" />Unduh Hasil</Button>
+                )}
+              </div>
+              <div className="flex justify-center gap-3 pt-2">
                 <Link href="/">
                   <Button variant="outline" className={BTN_OUTLINE}>
-                    <ArrowLeft className="mr-2 h-4 w-4" />
                     Kembali ke Beranda
                   </Button>
                 </Link>
@@ -73,6 +89,7 @@ export default function SuccessPage() {
                   <Button className={BTN_PRIMARY}>Screening Lagi</Button>
                 </Link>
               </div>
+              
 
               {/* catatan kecil agar konsisten dengan halaman hasil */}
               <blockquote

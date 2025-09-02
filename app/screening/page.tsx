@@ -260,33 +260,42 @@ export default function ScreeningPage() {
   }
   const prev = () => setStep((s) => Math.max(s - 1, 1))
 
-  const submitAndFinish = () => {
-    // payload mentahan + timestamp
-    const payload = { ...formData, $submittedAt: new Date().toISOString() };
-
+  const submitAndFinish = async () => {
+    setIsSubmitting(true);
     try {
-      // kirim diam-diam; tidak blok UI
-      if (typeof navigator !== "undefined" && "sendBeacon" in navigator) {
-        const blob = new Blob([JSON.stringify(payload)], { type: "application/json" });
-        (navigator as any).sendBeacon("/api/screening", blob);
-        router.replace("/screening/success");
+      const ctrl = new AbortController();
+      const to = setTimeout(() => ctrl.abort(), 8000);
+
+      const res = await fetch("/api/screening", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+        cache: "no-store",
+        keepalive: true,
+        signal: ctrl.signal,
+      });
+
+      clearTimeout(to);
+
+      if (res.ok) {
+        const j = await res.json();
+        const qs = new URLSearchParams();
+        if (j.downloadTxtUrl)  qs.set("txt", j.downloadTxtUrl);
+        if (j.downloadJsonUrl) qs.set("json", j.downloadJsonUrl);
+        if (j.filenameTxt)     qs.set("file", j.filenameTxt);
+        router.push(`/screening/success?${qs.toString()}`);
         return;
       }
-    } catch (e) {
-      console.warn("sendBeacon failed, fallback to fetch:", e);
+
+      router.push("/screening/success?offline=1");
+    } catch {
+      router.push("/screening/success?offline=1");
+    } finally {
+      setIsSubmitting(false);
     }
-
-    // fallback: fetch keepalive, tapi navigasi TETAP jalan
-    fetch("/api/screening", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-      keepalive: true,
-      cache: "no-store",
-    }).catch((e) => console.warn("submit error:", e));
-
-    router.replace("/screening/success");
   };
+
+
 
   return (
     <div className="min-h-screen  bg-gradient-to-br from-secondary/20 to-primary/10">

@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { writeFile, mkdir } from "fs/promises";
+import { writeFile, mkdir, readFile } from "fs/promises";
 import { existsSync } from "fs";
 import path from "path";
 
@@ -104,6 +104,9 @@ function computeResults(payload: AnyRecord) {
   return { items, overall, top };
 }
 
+const DATA_DIR = path.join(process.cwd(), "data", "screening")
+
+
 export async function POST(request: NextRequest) {
   try {
     const data = (await request.json()) as AnyRecord;
@@ -181,11 +184,14 @@ export async function POST(request: NextRequest) {
     };
     await writeFile(path.join(dataDir, `${base}.json`), JSON.stringify(jsonOut, null, 2), "utf8");
 
+    const downloadTxtUrl  = `/api/screening?file=${encodeURIComponent(`${base}.txt`)}&type=txt`;
+
     return NextResponse.json({
       success: true,
       message: "Data screening berhasil disimpan",
       fileTxt: `${base}.txt`,
       fileJson: `${base}.json`,
+      downloadTxtUrl,
       results,
     });
   } catch (err) {
@@ -194,6 +200,33 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET()  { return NextResponse.json({ error: "Method not allowed" }, { status: 405 }); }
+// === GET untuk download file ===
+export async function GET(request: NextRequest) {
+  const params = request.nextUrl.searchParams
+  const file = params.get("file")
+  const type = params.get("type") ?? "txt"
+
+  if (!file) return NextResponse.json({ error: "Missing file" }, { status: 400 })
+  // sanitasi biar hanya dalam folder screening & format kita
+  if (!/^[a-z0-9_-]+\.(txt|json)$/i.test(file)) {
+    return NextResponse.json({ error: "Invalid filename" }, { status: 400 })
+  }
+
+  const abs = path.join(DATA_DIR, file)
+  if (!existsSync(abs)) return NextResponse.json({ error: "Not found" }, { status: 404 })
+
+  const buff = await readFile(abs)
+  const contentType = type === "json" ? "application/json; charset=utf-8" : "text/plain; charset=utf-8"
+
+  return new NextResponse(buff, {
+    status: 200,
+    headers: {
+      "Content-Type": contentType,
+      "Content-Disposition": `attachment; filename="${file}"`,
+      "Cache-Control": "no-store",
+    },
+  })
+}
+
 export async function PUT()  { return NextResponse.json({ error: "Method not allowed" }, { status: 405 }); }
 export async function DELETE(){ return NextResponse.json({ error: "Method not allowed" }, { status: 405 }); }

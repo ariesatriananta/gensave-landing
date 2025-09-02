@@ -50,8 +50,17 @@ export default function HomePage() {
       </header>
 
       {/* Hero Section */}
-      <section id="beranda" className="py-20 bg-gradient-to-br from-secondary/20 to-primary/10">
+      <section id="beranda" className="py-12 bg-gradient-to-br from-secondary/20 to-primary/10">
         <div className="container mx-auto px-4 text-center">
+          <div className="flex justify-center items-center gap-2 py-4 mt-0">
+            <Image
+              src="/logo.png"
+              alt="Logo GenSave"
+              width={180}
+              height={180}
+              className="object-contain"
+            />
+          </div>
           <div className="max-w-4xl mx-auto">
             <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6 text-balance">
               Persiapkan Masa Depan Keluarga yang Lebih Sehat
