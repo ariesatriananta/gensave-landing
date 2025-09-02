@@ -6,6 +6,13 @@ import Link from "next/link"
 import Image from 'next/image';
 
 export default function HomePage() {
+  const CONTRIBUTORS = [
+    "Fifi Alviana",
+    "Candra Dewi Rahayu",
+    "Anisa Rohma Ningrum",
+    "Erika Lestari",
+  ];
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -246,7 +253,14 @@ export default function HomePage() {
           </div>
 
           <div className="border-t mt-8 pt-8 text-center">
-            <p className="text-muted-foreground">© 2024 GenSave. Semua hak dilindungi undang-undang.</p>
+            <p className="text-xs text-muted-foreground">
+              © {new Date().getFullYear()} <span className="font-semibold text-foreground">GenSave</span>. All rights reserved.
+            </p>
+              <p className="text-sm text-muted-foreground">
+                <span className="text-foreground">
+                  {CONTRIBUTORS.join(" • ")}
+                </span>
+              </p>
           </div>
         </div>
       </footer>

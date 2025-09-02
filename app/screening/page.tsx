@@ -163,7 +163,6 @@ export default function ScreeningPage() {
     },
   ]
 
-  // ⬇️ letakkan DI DALAM function ScreeningPage(), setelah DISEASES
   const BASE_AFTER_DATA = 2; // 1 intro, 2 data
   const totalSteps = 2 + DISEASES.length * 2 + 1; // +1 summary
 
@@ -192,7 +191,12 @@ export default function ScreeningPage() {
   );
 
 
-
+  const CONTRIBUTORS = [
+    "Fifi Alviana",
+    "Candra Dewi Rahayu",
+    "Anisa Rohma Ningrum",
+    "Erika Lestari",
+  ];
 
   const BTN_PRIMARY =
     "bg-[#FFA052] hover:bg-orange-500 text-white shadow-sm " +
@@ -628,7 +632,24 @@ export default function ScreeningPage() {
           
         </div>
       </section>
+
+      <footer id="kontak" className="bg-card border-t py-6">
+        <div className="container mx-auto px-4">
+          <div className="text-center">
+            <p className="text-xs text-muted-foreground">
+              © {new Date().getFullYear()} <span className="font-semibold text-foreground">GenSave</span>. All rights reserved.
+            </p>
+            <p className="text-sm text-muted-foreground">
+              <span className="text-foreground">
+                {CONTRIBUTORS.join(" • ")}
+              </span>
+            </p>
+          </div>
+        </div>
+      </footer>
     </div>
+
+    
   )
 }
 
